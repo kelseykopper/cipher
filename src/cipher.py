@@ -6,6 +6,7 @@ def read_map(map_name, mode):
   """ Reads cipher map from the given text file. """
   cipher_map = dict()
   map = open(map_name, "r", encoding="utf-8")
+
   if mode == "-en": 
     for line in map: 
       # split each line into a list of 2 items (key and value)
@@ -54,7 +55,7 @@ def gen_cipher(rot, mode):
 
   return cipher_map
 
-def code_file(src_name, dst_name, map, mode): 
+def code_file(src_name, dst_name, map): 
   """ Encodes/decodes source file to destination file using the cipher map.
       Note: map must be constructed such that keys are found in the source file
        and values are the "result" of encryption/decryption.
@@ -117,5 +118,5 @@ if __name__ == '__main__':
     map_name = sys.argv[4]
     cipher_map = read_map(map_name, mode)
 
-  code_file(src_name, dst_name, cipher_map, mode)
+  code_file(src_name, dst_name, cipher_map)
 
