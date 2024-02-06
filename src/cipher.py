@@ -1,5 +1,8 @@
-""" Generate random substitution ciphers. have multiple files for possible symbols? 
-  or use ascii """
+""" 
+@Author Kelsey Kopper
+Class and methods for cipher maps.
+"""
+
 import random
 import json
 import os
@@ -19,7 +22,6 @@ class CipherMap:
     Args:
       name (string): Name of cipher library. Will be used to either locate a 
       pre-existing library, or store a new library.
-
     """
     # create 2 dicts (one for encryption lookup, the other for decryption lookup)
     self.encrypt = dict()
@@ -28,8 +30,7 @@ class CipherMap:
     self.name = name
 
     # create file path & names for encryption, decryption json files
-    # TODO: make this not broken
-    self.cipher_path = "lib/" + self.name + "/"
+    self.cipher_path = "./lib/" + self.name + "/"
     self.encrypt_name = self.cipher_path + self.name + "_encrypt"
     self.decrypt_name = self.cipher_path + self.name + "_decrypt"
 
@@ -47,7 +48,8 @@ class CipherMap:
     if not os.path.exists(self.cipher_path):
       os.makedirs(self.cipher_path)
     else:
-      print("Error: cipher library already exists. Terminating...\n")
+      print("Error: cipher library already exists.")
+      return
 
     used = []
 
@@ -72,10 +74,13 @@ class CipherMap:
     """ Reads cipher map from files.
     """
     # load both encrypt/decrypt dicts from json file
-    with open(self.encrypt_name, "r") as encrypt_file, open(self.decrypt_name, "r") as decrypt_file:
-      # TODO: add error handling if files aren't found
-      self.encrypt = json.load(encrypt_file)
-      self.decrypt = json.load(decrypt_file)
+    try:
+      with open(self.encrypt_name, "r") as encrypt_file, open(self.decrypt_name, "r") as decrypt_file:
+        self.encrypt = json.load(encrypt_file)
+        self.decrypt = json.load(decrypt_file)
+    except FileNotFoundError:
+      print("Error: unable to locate one or both cipher maps. Terminating...")
+      return
 
   def code_file(self, file_name, mode): 
     """ Encodes/decodes source file to destination file using the cipher map.
@@ -123,39 +128,3 @@ class CipherMap:
       os.remove("temp.txt")
     except OSError as e:
       print(f'Error deleting file: {e}')
-
-
-# def gen_alphabet(alphabet, rot, map, mode):
-#   """ Helper function to create a cipher structure for the given rotation. """
-
-#   # get the last letter in keys alphabet before cipher values should wrap around
-#   # to the start of the alphabet
-#   last_letter = chr(ord(alphabet[-1]) - rot + 1)
-
-#   for letter in alphabet:
-#     if letter == last_letter:
-#       # wrap back to start of alphabet
-#       value = alphabet[0]
-#     elif letter > last_letter: 
-#       i = alphabet.index(value) # get the index of "value" from last iteration
-#       value = alphabet[i + 1]  # increments value alphabetically
-#     else: 
-#       # convert letter to ASCII, add rotation, then convert back to char
-#       value = chr(ord(letter) + rot)
-
-#     if mode == "-en":
-#       map[letter] = value
-#     elif mode == "-de":
-#       map[value] = letter
-
-# def gen_cipher(rot, mode):
-#   """ Generate a cipher map. """
-#   cipher_map = dict()
-#   lowercase_alphabet = list(string.ascii_lowercase)
-#   uppercase_alphabet = list(string.ascii_uppercase)
-
-#   gen_alphabet(lowercase_alphabet, rot, cipher_map, mode)
-#   gen_alphabet(uppercase_alphabet, rot, cipher_map, mode)
-
-#   return cipher_map
-
