@@ -1,12 +1,3 @@
-# @author Kelsey Kopper
-import sys
-import string
-import cipher as c
-
-# if __name__ == '__main__':
-#   c_map = c.CipherMap("hw1")
-#   c_map.create_cipher()
-#   c_map.code_file("tests/hw1.txt", "encrypt")
 
 import tkinter as tk
 from tkinter import filedialog
