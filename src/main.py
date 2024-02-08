@@ -2,31 +2,30 @@
 import sys
 import string
 import cipher as c
+import tkinter as tk
 
-if __name__ == '__main__':
-  c_map = c.CipherMap("example")
-  c_map.read_map()
-  c_map.code_file("hw1_ex.txt", "decrypt")
+from tkinter import filedialog 
+from tkinter import messagebox
 
-  print("Input the name of the cipher library: ")
-  name = input()
+# if __name__ == '__main__':
+#   c_map = c.CipherMap("hw1")
+#   c_map.create_cipher()
+#   c_map.code_file("tests/hw1.txt", "encrypt")
 
-  c_map = c.CipherMap(name)
-  
-  print("Use preexisting library with this name? (y/n): ")
-  ans = input()
-  if (ans == "y"):
-    c_map.read_map()
-  elif (ans == "n"):
-    print("Generating cipher...")
-    c_map.create_cipher()
+def open_file():
+  path = filedialog.askopenfilename() 
+  if not path: 
+    return 
+  with open(path, "r") as file: 
+    text = file.read()
+    text_edit.insert(tk.END, text)
 
-  print("Enter path to file to convert: ")
-  file = input()
+window = tk.Tk() 
+window.title("Cipher program")
 
-  print("Encrypt (en) or decrypt (de) this file?: ")
-  ans = input()
-  if (ans == "en"):
-    c_map.code_file(file, "encrypt")
-  elif (ans == "de"):
-    c_map.code_file(file, "decrypt")
+window.rowconfigure(0, minsize=800, weight=1)
+window.columnconfigure(1, minsize=800, weight=1)
+
+text_edit = tk.Text(window)
+
+window.mainloop()
