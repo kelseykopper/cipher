@@ -20,6 +20,22 @@ from tkinter import ttk
   # maybe then if it doesn't find a lib with that name, generate new one
 # file to encode/decode
 
+# =============================================================================
+# FUNCTIONS RELATING TO FRONT END
+
+def lib_exists(c_map):
+    """ Function to check if a cipher library already exists under this name. 
+        Returns true if lib exists, false otherwise. 
+        
+        Args:
+            c_map (CipherObject instance): Initialized instance of a CipherMap.
+    """
+    lib_path = c_map.cipher_path
+    if not lib_path: 
+        return False
+    else: 
+        return True 
+
 def open_file():
     filepath = filedialog.askopenfilename()
     if not filepath:
@@ -45,6 +61,7 @@ txt_display = tk.Text(window)
 txt_display.config(state=tk.DISABLED)  # Start with the widget in the disabled state
 txt_display.grid(row=0, column=1, sticky="nsew")
 
+# set up frame for the UI elements 
 menu_frame = tk.Frame(window, relief=tk.RAISED, bd=2)
 menu_frame.grid(row=0, column=0, sticky="ns")
 menu_frame.grid_rowconfigure(index=0, minsize=20)
@@ -68,6 +85,9 @@ lib_entry = ttk.Entry(menu_frame, width=30, textvariable=cipher_lib)
 lib_entry.grid(column=0, row=textrow, sticky="ew", padx=20, pady=(0,25))
 textrow += 2
 
+# create cipher object using the lib name 
+c_map = c.CipherMap(str(cipher_lib))
+
 # prompt to choose mode 
 ttk.Label(menu_frame, text="Select mode:").grid(column=0, row=textrow, sticky="w")
 textrow += 1
@@ -85,5 +105,8 @@ textrow += 2
 # button to convert; TODO - add command functionality
 code_button = tk.Button(menu_frame, text="GO")
 code_button.grid(row=textrow, column=0, sticky="ew", padx=20, pady=(5, 20))
+
+# =============================================================================
+# TRYING TO GET FRONT AND BACK TO WORK TOGETHER FUNCTIONS
 
 window.mainloop()
