@@ -28,22 +28,47 @@ import kivy
 kivy.require('2.3.0') 
 
 from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
-class MainMenu(GridLayout):
+def on_enter(instance):
+    print('User pressed enter in', instance)
+    print("With value ", instance.text)
+
+
+class InteractPanel(BoxLayout): 
     def __init__(self, **kwargs):
-        super(MainMenu, self).__init__(**kwargs)
-        self.cols = 2
+        super(InteractPanel, self).__init__(**kwargs)
+        self.orientation='vertical'
+
+        self.add_widget(Label(text='testing testing'))
+        self.add_widget(Label(text='WHO ARE YOU'))
+
         self.add_widget(Label(text='Cipher library name'))
         self.lib_name = TextInput(multiline=False)
 
-        self.add_widget(self.lib_name)
-        # self.add_widget(Label(text='File'))
-        # self.password = TextInput(password=True, multiline=False)
-        # self.add_widget(self.password)
+        self.lib_name.bind(on_text_validate=on_enter)
 
+        self.add_widget(self.lib_name)
+
+    def get_file_data(self):
+        """ Get file data """
+        return "teehee nothing here"
+
+
+class MainMenu(BoxLayout):
+    def __init__(self, **kwargs):
+        super(MainMenu, self).__init__(**kwargs)
+        self.orientation='horizontal'
+
+        # left panel for selecting settings related to cipher
+        self.interact_panel = InteractPanel()
+        self.add_widget(self.interact_panel)
+
+        # TODO: right panel should display file contents if available
+        file_data = self.interact_panel.get_file_data()
+        self.add_widget(Label(text=file_data))
 
 class CipherApp(App):
 

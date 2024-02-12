@@ -23,14 +23,13 @@ class CipherMap:
 
     Args:
       name (string): Name of cipher library. Will be used to either locate a 
-      pre-existing library, or store a new library.
+      pre-existing library, or store a new library. Defaults to no name.
     """
     # create 2 dicts (one for encryption lookup, the other for decryption lookup)
     self.encrypt = dict()
     self.decrypt = dict() 
 
     self.name = name
-
     # create file path & names for encryption, decryption json files
     self.cipher_path = "./lib/" + self.name + "/"
     self.encrypt_name = self.cipher_path + self.name + "_encrypt"
@@ -102,32 +101,35 @@ class CipherMap:
       return
 
     # read from source file, create a temp file to write the encoded/decoded file to
-    with open(file_name, 'r') as file, open("temp.txt", "w") as temp:
-      if mode == "encrypt":
-        for line in file:
-          for char_key in line: 
-            val = self.encrypt.get(char_key)
-            if val != None:
-              temp.write(val)
-            else:
-              temp.write(char_key)
+    try:
+      with open(file_name, 'r') as file, open("temp.txt", "w") as temp:
+        if mode == "encrypt":
+          for line in file:
+            for char_key in line: 
+              val = self.encrypt.get(char_key)
+              if val != None:
+                temp.write(val)
+              else:
+                temp.write(char_key)
 
-      elif mode == "decrypt":
-        for line in file:
-          for char_val in line: 
-            key = self.decrypt.get(char_val)
-            if key != None:
-              temp.write(key)
-            else:
-              temp.write(char_val)
+        elif mode == "decrypt":
+          for line in file:
+            for char_val in line: 
+              key = self.decrypt.get(char_val)
+              if key != None:
+                temp.write(key)
+              else:
+                temp.write(char_val)
 
-    # now write to our source file, read from temp file to overwrite original contents of source
-    with open(file_name, 'w') as file, open("temp.txt", "r") as temp:
-      # NOTE: this approach stores all data as a single string. 
-      # not great for large files (>4096 bytes, maybe use a different approach?)
-      data = temp.read()
-      file.write(data)
-      
+      # now write to our source file, read from temp file to overwrite original contents of source
+      with open(file_name, 'w') as file, open("temp.txt", "r") as temp:
+        # NOTE: this approach stores all data as a single string. 
+        # not great for large files (>4096 bytes, maybe use a different approach?)
+        data = temp.read()
+        file.write(data)
+    except FileNotFoundError:
+      print("Error: file not found.")
+        
     # we only want to modify the input file, so delete temp
     try:
       os.remove("temp.txt")
