@@ -9,12 +9,14 @@ import os
 
 # range of values for cipher values
 MAP_RANGE = (127, 1423)
+
 # range of values for inputs (i.e., inputs are assumed to use ASCII only; ignore formatting, whitespace)
 INPUT_RANGE = (33, 126) 
 
 class CipherMap:
   """ Handle cipher map operations. Create/read maps and handle encoding/decoding 
-      files. """
+      files. 
+  """
   def __init__(self, name):
     """
     Initialize cipher map.
@@ -34,13 +36,16 @@ class CipherMap:
     self.encrypt_name = self.cipher_path + self.name + "_encrypt"
     self.decrypt_name = self.cipher_path + self.name + "_decrypt"
 
+  def __str__(self):
+    return "Library path: {}".format(self.cipher_path)
+
   def create_cipher(self):
     """ Generate a random substitution cipher. Return the cipher list object
         and store in files.
     """
 
     def get_char():
-      """ Helper function to get a random Unicode character. """
+      """ Helper function to generate a random Unicode character. """
       char = random.randint(MAP_RANGE[0], MAP_RANGE[1])
       return chr(char)
 
