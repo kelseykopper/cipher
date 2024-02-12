@@ -15,6 +15,15 @@ import cipher as c
   # maybe then if it doesn't find a lib with that name, generate new one
 # file to encode/decode
 
+
+# \venv\share\kivy-examples\demo\showcase\main.py
+# showcase -> ToggleButton (for encode/decode)
+# showcase -> RstDocument
+# showcase -> Popups
+# showcase -> FileChoosers (maybe this or somethign that actually opens)
+# showcase -> Splitter (to resize document)
+# showcase -> TextInputs (to enter lib name)
+
 import kivy
 kivy.require('2.3.0') 
 
@@ -24,16 +33,16 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
 class MainMenu(GridLayout):
-
     def __init__(self, **kwargs):
         super(MainMenu, self).__init__(**kwargs)
         self.cols = 2
         self.add_widget(Label(text='Cipher library name'))
-        self.username = TextInput(multiline=False)
-        self.add_widget(self.username)
-        self.add_widget(Label(text='File'))
-        self.password = TextInput(password=True, multiline=False)
-        self.add_widget(self.password)
+        self.lib_name = TextInput(multiline=False)
+
+        self.add_widget(self.lib_name)
+        # self.add_widget(Label(text='File'))
+        # self.password = TextInput(password=True, multiline=False)
+        # self.add_widget(self.password)
 
 
 class CipherApp(App):
