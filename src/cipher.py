@@ -17,7 +17,7 @@ class CipherMap:
   """ Handle cipher map operations. Create/read maps and handle encoding/decoding 
       files. 
   """
-  def __init__(self, name):
+  def __init__(self):
     """
     Initialize cipher map.
 
@@ -29,14 +29,18 @@ class CipherMap:
     self.encrypt = dict()
     self.decrypt = dict() 
 
-    self.name = name
-    # create file path & names for encryption, decryption json files
-    self.cipher_path = "./lib/" + self.name + "/"
-    self.encrypt_name = self.cipher_path + self.name + "_encrypt"
-    self.decrypt_name = self.cipher_path + self.name + "_decrypt"
+    self.name = ""
 
   def __str__(self):
     return "Library path: {}".format(self.cipher_path)
+  
+  def set_name(self, name):
+    self.name = name 
+
+     # create file path & names for encryption, decryption json files
+    self.cipher_path = "./lib/" + self.name + "/"
+    self.encrypt_name = self.cipher_path + self.name + "_encrypt"
+    self.decrypt_name = self.cipher_path + self.name + "_decrypt"
 
   def create_cipher(self):
     """ Generate a random substitution cipher. Return the cipher list object
@@ -47,6 +51,11 @@ class CipherMap:
       """ Helper function to generate a random Unicode character. """
       char = random.randint(MAP_RANGE[0], MAP_RANGE[1])
       return chr(char)
+    
+    # error handling
+    if (self.name == ""):
+      print("Error creating cipher: no library name provided.")
+      return
 
     # creating cipher lib + error handling if lib already exists
     if not os.path.exists(self.cipher_path):
@@ -77,13 +86,18 @@ class CipherMap:
   def read_map(self): 
     """ Reads cipher map from files.
     """
+    # error handling
+    if (self.name == ""):
+      print("Error reading cipher library: no library name provided.")
+      return
+
     # load both encrypt/decrypt dicts from json file
     try:
       with open(self.encrypt_name, "r") as encrypt_file, open(self.decrypt_name, "r") as decrypt_file:
         self.encrypt = json.load(encrypt_file)
         self.decrypt = json.load(decrypt_file)
     except FileNotFoundError:
-      print("Error: unable to locate one or both cipher maps. Terminating...")
+      print("Error: unable to locate one or both cipher maps.\n")
       return
 
   def code_file(self, file_name, mode): 
@@ -96,8 +110,11 @@ class CipherMap:
     """
 
     # error handling
-    if self.encrypt == {} or self.decrypt == {}:
-      print("Error: cipher maps are emtpy. Terminating...\n")
+    if (self.name == ""):
+      print("Error: no cipher library name provided.\n")
+      return
+    elif self.encrypt == {} or self.decrypt == {}:
+      print("Error: cipher maps are emtpy.\n")
       return
 
     # read from source file, create a temp file to write the encoded/decoded file to
@@ -121,7 +138,7 @@ class CipherMap:
               else:
                 temp.write(char_val)
 
-      # now write to our source file, read from temp file to overwrite original contents of source
+      # write to source file, read from temp file to overwrite original contents of source
       with open(file_name, 'w') as file, open("temp.txt", "r") as temp:
         # NOTE: this approach stores all data as a single string. 
         # not great for large files (>4096 bytes, maybe use a different approach?)
