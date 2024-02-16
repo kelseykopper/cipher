@@ -104,9 +104,14 @@ class CipherApp(App):
         if selection:
             self.file_name = selection[0]
             # TODO: figure out how to display unicode characters
-            with open(self.file_name, 'r', encoding="utf-8") as file: 
-                self.file_contents.text = file.read()
 
+            with open(self.file_name, 'r', encoding="utf-8") as file: 
+                #self.file_contents.text = file.read()
+                temp = file.read()
+
+            # see if python encodes this right orn ot 
+                
+            print(temp)
             print(f'Selected file: {selection[0]}')
 
         else:
