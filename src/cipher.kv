@@ -1,0 +1,94 @@
+#:kivy 2.3.0
+
+<Label>:
+  font_name: '../fonts/NotoSans-Light.ttf'
+  font_size: 19
+  text_size: root.width, None
+  size: self.texture_size
+  halign: 'center'
+
+<LoadDialog>:
+  BoxLayout:
+    size: root.size
+    pos: root.pos
+    orientation: "vertical"
+    FileChooserListView:
+      id: filechooser
+
+    BoxLayout:
+      size_hint_y: None
+      height: 30
+      Button:
+        text: "Cancel"
+        on_release: root.cancel()
+
+      Button:
+        text: "Open"
+        on_release: root.load(filechooser.path, filechooser.selection)
+
+<Cipher>:
+  file_display: file_id
+  lib_inpt: lib_id
+  update_msg: msg_id
+
+  BoxLayout:
+    orientation: 'horizontal'
+    padding: 10
+
+    BoxLayout:
+      orientation: 'vertical' 
+      spacing: 15
+
+      Label:
+        text: 'Cipher library name'
+        halign: 'left'
+        size_hint_y: None
+
+      TextInput:
+        id: lib_id
+        height: 10
+
+      Button:
+        text: 'Locate library'
+        on_press: root.get_lib(lib_id.text)
+
+      Label:
+        text: 'Searching for preexisting library under this name. If no library is found, a new library will be created.'
+        id: msg_id
+        height: 60
+
+      Button:
+        text: 'open file'
+        on_press: root.show_load()
+
+      Label:
+        text: 'Select file mode'
+        halign: 'left'
+        height: 20
+        size_hint_y: None
+
+      BoxLayout:
+        size_hint_y: None
+        orientation: 'vertical'
+        height: 60
+        spacing: 0
+
+        ToggleButton:
+          text: 'Encode'
+          group: 'mode'
+          on_press: root.set_mode('encode')
+
+        ToggleButton:
+          text: 'Decode'
+          group: 'mode'
+          on_press: root.set_mode('decode')
+
+      Button:
+        text: 'Convert'
+        on_press: root.convert()
+
+    Label:
+      id: file_id
+      halign: 'left'
+      padding: 10
+      text: ''

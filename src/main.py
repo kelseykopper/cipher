@@ -1,139 +1,96 @@
-# @author Kelsey Kopper
-import sys
-import string
-import cipher as c
+""" 
+@author Kelsey Kopper
+@brief Classes and methods for handling frontend.
+"""
 
-
-# really only need a couple pieces of info from ui:
-# mode -> encrypt or decrypt (maybe have selection option for this)
-# cipher lib name -> text box
-  # should program automatically search for lib with this name? 
-  # maybe then if it doesn't find a lib with that name, generate new one
-# file to encode/decode
-
-
-# \venv\share\kivy-examples\demo\showcase\main.py
-# showcase -> ToggleButton (for encode/decode)
-# showcase -> RstDocument
-# showcase -> Popups
-# showcase -> FileChoosers (maybe this or somethign that actually opens)
-# showcase -> Splitter (to resize document)
-# showcase -> TextInputs (to enter lib name)
-
+import os
 import kivy
+import cipher as c
 kivy.require('2.3.0') 
 
 from kivy.app import App
-from kivy.uix.button import Button 
-from kivy.uix.widget import Widget
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
-from kivy.uix.filechooser import FileChooserListView
+from kivy.core.window import Window
+from kivy.properties import ObjectProperty
 
-# def on_enter(instance):
-#     print('User pressed enter in', instance)
-#     print("With value ", instance.text)
+# TODO - set window name to change when a file is selected
+# TODO - add scroll bar to file contents window 
+# TODO - proper google documentation style
 
+class LoadDialog(FloatLayout):
+    """ Class for handling file opening/closing """
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
 
-# class InteractPanel(BoxLayout): 
-#     def __init__(self, **kwargs):
-#         super(InteractPanel, self).__init__(**kwargs)
-#         self.orientation='vertical'
+class Cipher(BoxLayout):
+    # file to convert
+    file_display = ObjectProperty()
 
-#         self.add_widget(Label(text='testing testing'))
-#         self.add_widget(Label(text='WHO ARE YOU'))
+    # name of cipher library
+    lib_inpt = ObjectProperty() 
 
-#         self.add_widget(Label(text='Cipher library name'))
-#         self.lib_name = TextInput(multiline=False)
+    # notification box relating to file I/O
+    update_msg = ObjectProperty()
 
-#         self.lib_name.bind(on_text_validate=on_enter)
+    # attributes relating to cipher obj + file conversion
+    cipher_map = c.CipherMap()
+    mode = ''
+    file_name = ''
 
-#         self.add_widget(self.lib_name)
+    def set_update(self, msg):
+        """ Change notification box. """
+        self.update_msg.text = msg
 
-#     def get_file_data(self):
-#         """ Get file data """
-#         return "teehee nothing here"
+    def display_file(self, file):
+        """ Open file to convert and display its contents. """
+        with open(file, 'r') as f:
+            self.file_display.text = f.read()
 
+    def get_lib(self, name):
+        """ Locate/create cipher library from given name. """
+        self.cipher_map.set_name(name)
 
-# class MainMenu(BoxLayout):
-#     def __init__(self, **kwargs):
-#         super(MainMenu, self).__init__(**kwargs)
-#         self.orientation='horizontal'
+        if self.cipher_map.already_exists(): 
+            self.cipher_map.read_map()
+            self.set_update("Located preexisting library.")
+        else: 
+            self.cipher_map.create_cipher()
+            self.set_update("Unable to locate preexissting library. Created new library under this name")
 
-#         # left panel for selecting settings related to cipher
-#         self.interact_panel = InteractPanel()
-#         self.add_widget(self.interact_panel)
+    def set_mode(self, mode):
+        """ Set file conversion mode. """
+        self.mode = mode
 
-#         # TODO: right panel should display file contents if available
-#         file_data = self.interact_panel.get_file_data()
-#         self.add_widget(Label(text=file_data))
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_load(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Open file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def load(self, path, file):
+        file = os.path.join(path, file[0])
+        self.file_name = file
+        self.display_file(file)
+
+        self.dismiss_popup()
+        
+    def convert(self):
+        """ Function to perform file conversion. """
+        if self.file_name != '' and self.mode != '' and self.cipher_map.name_is_set:
+            self.cipher_map.code_file(self.file_name, self.mode)
+            self.display_file(self.file_name)
+        else:
+            self.set_update("Error: complete all fields before attempting to convert file.")
 
 class CipherApp(App):
-    def __init__(self, **kwargs):
-        super(CipherApp, self).__init__(**kwargs)
-        self.c_map = c.CipherMap()
-        self.file_name = ""
-        self.file_contents = Label(text="", font_name='./fonts/Roboto.ttf')
-
-    def open_file(self):
-        pass
-
-    def on_enter(self, instance):
-        """ Set the cipher library name when enter key is pressed in text box. """
-        self.c_map.set_name(instance.text)
-
-    def show_file_chooser(self, instance):
-        filechooser = FileChooserListView()
-        
-        content = BoxLayout(orientation='vertical')
-        content.add_widget(filechooser)
-        
-        open_btn = Button(text="Open", size_hint=(1, 0.1))
-        content.add_widget(open_btn)
-        
-        self.popup = Popup(title="Choose file to convert", content=content,
-                           size_hint=(0.9, 0.9))
-        
-        open_btn.bind(on_press=lambda _: self.open_selected(filechooser.selection))
-        
-        self.popup.open()
-
-    def open_selected(self, selection):
-        if selection:
-            self.file_name = selection[0]
-            # TODO: figure out how to display unicode characters
-            with open(self.file_name, 'r', encoding='utf-8') as file: 
-                self.file_contents.text = file.read()
-
-        else:
-            print('No file selected.')
-        self.popup.dismiss()
 
     def build(self):
-        wid = Widget()
-
-        lib_inputbox = TextInput(multiline=False)
-        lib_prompt = Label(text="Cipher library name")
-        label2 = Label(text = 'goodbye world')
-
-        btn_file = Button(text='Open file to convert', on_press=self.show_file_chooser)
-
-        lib_inputbox.bind(on_text_validate=lambda instance: self.on_enter(instance))
-
-        # TODO: make root and interact_panel not overlap
-        interact_panel = BoxLayout(orientation='vertical')
-        interact_panel.add_widget(lib_prompt)
-        interact_panel.add_widget(lib_inputbox)
-        interact_panel.add_widget(btn_file)
-        interact_panel.add_widget(label2)
-
-        root = BoxLayout(orientation='horizontal')
-        root.add_widget(interact_panel)
-        root.add_widget(self.file_contents)
-        return root
-
-
+        return Cipher()
+    
 if __name__ == '__main__':
     CipherApp().run()
