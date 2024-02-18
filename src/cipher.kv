@@ -4,14 +4,20 @@
   font_name: '../fonts/NotoSans-Light.ttf'
   font_size: 19
   text_size: root.width, None
+  color: [0.1607843137254902, 0.1450980392156863, 0.13333333333333333, 1]
   size: self.texture_size
   halign: 'center'
+
+<Button>:
+  background_normal: ''
+  background_color: [0.8392156862745098, 0.6509803921568628, 0.5725490196078431, 1]
 
 <LoadDialog>:
   BoxLayout:
     size: root.size
     pos: root.pos
     orientation: "vertical"
+
     FileChooserListView:
       id: filechooser
 
@@ -32,6 +38,13 @@
   update_msg: msg_id
 
   BoxLayout:
+    canvas.before:
+      Color:
+        rgba: root.color_palette["beige"]
+      Rectangle:
+        pos: self.pos
+        size: self.size
+
     orientation: 'horizontal'
     padding: 10
 
@@ -40,16 +53,19 @@
       spacing: 15
 
       Label:
-        text: 'Cipher library name'
+        font_name: '../fonts/NotoSans-Bold.ttf'
+        text: 'CIPHER LIBRARY NAME'
         halign: 'left'
         size_hint_y: None
 
       TextInput:
         id: lib_id
-        height: 10
+        font_size: 20
+        background_color: [0.6392156862745098, 0.5647058823529412, 0.5058823529411764, 1]
+        size_hint_y: .5
 
       Button:
-        text: 'Locate library'
+        text: 'locate library'
         on_press: root.get_lib(lib_id.text)
 
       Label:
@@ -62,7 +78,8 @@
         on_press: root.show_load()
 
       Label:
-        text: 'Select file mode'
+        font_name: '../fonts/NotoSans-Bold.ttf'
+        text: 'SELECT FILE MODE'
         halign: 'left'
         height: 20
         size_hint_y: None
@@ -74,12 +91,12 @@
         spacing: 0
 
         ToggleButton:
-          text: 'Encode'
+          text: 'encode'
           group: 'mode'
           on_press: root.set_mode('encode')
 
         ToggleButton:
-          text: 'Decode'
+          text: 'decode'
           group: 'mode'
           on_press: root.set_mode('decode')
 
