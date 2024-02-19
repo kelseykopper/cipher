@@ -1,6 +1,11 @@
-""" 
-@author Kelsey Kopper
-Class and methods for cipher maps.
+""" Classes and logic behind cipher library storage and cipher creation.
+
+This file contains methods relating to the CipherMap class, which handles cipher
+creation and file conversion.
+
+This file is intended to be used in combination with main.py, which contains 
+this program's front-end UI.
+
 """
 
 import random
