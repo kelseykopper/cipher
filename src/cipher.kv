@@ -1,5 +1,6 @@
 #:kivy 2.3.0
 
+# Global behavior for different widget types
 <Label>:
   font_name: '../fonts/NotoSans-Light.ttf'
   font_size: 19
@@ -7,6 +8,12 @@
   color: [0.1607843137254902, 0.1450980392156863, 0.13333333333333333, 1]
   size: self.texture_size
   halign: 'center'
+
+<Popup>:
+  size_hint: [0.9, 0.9]
+  title: "Open file"
+  
+
 
 <Button>:
   background_normal: ''
@@ -32,11 +39,14 @@
         text: "Open"
         on_release: root.load(filechooser.path, filechooser.selection)
 
+# The actual app
 <Cipher>:
   file_display: file_id
   lib_inpt: lib_id
   update_msg: msg_id
 
+  # Represents entire window. 
+  # Left box is for UI elements; right box is for file contents display
   BoxLayout:
     canvas.before:
       Color:
@@ -48,6 +58,7 @@
     orientation: 'horizontal'
     padding: 10
 
+    # This is the left box containing UI items
     BoxLayout:
       orientation: 'vertical' 
       spacing: 15
@@ -104,8 +115,11 @@
         text: 'Convert'
         on_press: root.convert()
 
+    # This is the right box containing file contents
     Label:
       id: file_id
       halign: 'left'
       padding: 10
       text: ''
+
+    # TODO -> add scrollbar 

@@ -77,8 +77,7 @@ class Cipher(BoxLayout):
 
     def show_load(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Open file", content=content,
-                            size_hint=(0.9, 0.9))
+        self._popup = Popup(content=content)
         self._popup.open()
 
     def load(self, path, file):
