@@ -19,12 +19,12 @@ MAP_RANGE = (127, 1423)
 INPUT_RANGE = (33, 126) 
 
 class CipherMap:
-  """ Handle cipher map operations. Create/read maps and handle encoding/decoding 
-      files. 
+  """ @brief Handle cipher map operations. Create/read maps and handle 
+      encoding/decoding files. 
   """
   def __init__(self):
     """
-    Initialize cipher map.
+    @brief Initialize cipher map.
     """
     # create 2 dicts (one for encodeion lookup, the other for decodeion lookup)
     self.encode = dict()
@@ -39,7 +39,10 @@ class CipherMap:
     self.decode_name = None
 
   def __str__(self):
-    return "Library path: {}".format(self.cipher_path)
+    if not self.name_is_set:
+      return "Error: map has not been created or identified."
+    else:
+      return self.cipher_path
   
   def set_name(self, name):
     """ @brief set library name for this cipher map
@@ -55,7 +58,7 @@ class CipherMap:
     print(self.cipher_path)
     
   def already_exists(self):
-    """ @brief: Check if cipher library already exists. 
+    """ @brief Check if cipher library already exists. 
         @return boolean indicating whether library was found
     """
     if os.path.exists(self.cipher_path) and self.name_is_set:
@@ -65,8 +68,8 @@ class CipherMap:
       return False
 
   def create_cipher(self):
-    """ Generate a random substitution cipher. Return the cipher list object
-        and store in files.
+    """ @brief Generate a random substitution cipher and store maps in json files.
+        @return Cipher list object
     """
 
     def get_char():
@@ -106,7 +109,7 @@ class CipherMap:
       json.dump(self.decode, decode_file)
   
   def read_map(self): 
-    """ Reads cipher map from files.
+    """ @brief Reads cipher map from files.
     """
     # error handling
     if not self.name_is_set:
@@ -123,12 +126,10 @@ class CipherMap:
       return
 
   def code_file(self, file_name, mode): 
-    """ Encodes/decodes source file to destination file using the cipher map.
-
-        Args:
-          file_name (string): Path to the file to encode/decode.
-          mode (string): Determines whether to encode or decode the file.
-            Options: "encode" or "decode".
+    """ @brief Encodes/decodes source file to destination file using 
+        the cipher map. Contents of file_name are modified as a side effect.
+        @param file_name Type string contains path of file to encode or decode.
+        @param mode Type string contains file operation type (encode or decode)
     """
 
     # error handling
