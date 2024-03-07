@@ -18,7 +18,6 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
-from kivy.core.window import Window
 from kivy.properties import ObjectProperty
 
 # TODO - set window name to change when a file is selected
@@ -31,6 +30,7 @@ class LoadDialog(FloatLayout):
     cancel = ObjectProperty(None)
 
 class Cipher(BoxLayout):
+    """ @brief Class for handling the program contents and functionality. """
     
     color_palette = {
         "beige" : [0.9372549019607843, 0.8509803921568627, 0.7058823529411765, 1],
@@ -55,27 +55,21 @@ class Cipher(BoxLayout):
     file_name = ''
 
     def set_update(self, msg):
-        """ Change notification box. 
-        
-            Args:
-                msg: message to display in notification box.
+        """ @brief Update displayed notification
+            @param msg Type string contains message to display in notif. box.
         """
         self.update_msg.text = msg
 
     def display_file(self, file):
-        """ Open file to convert and display its contents. 
-        
-            Args:
-                file: path to text file to display. Precondition: file path is valid.
+        """ @brief Open file to convert and display its contents. 
+            @param file Type string contains path to text file to display.
         """
         with open(file, 'r') as f:
             self.file_display.text = f.read()
 
     def get_lib(self, name):
-        """ Locate/create cipher library from given name. 
-        
-            Args:
-                name: the keyword name of the cipher library.
+        """ @brief Locate/create cipher library from given name. 
+            @param name Type string contains keyword name of the cipher library.
         """
         self.cipher_map.set_name(name)
 
@@ -87,27 +81,27 @@ class Cipher(BoxLayout):
             self.set_update("Unable to locate preexissting library. Created new library under this name")
 
     def set_mode(self, mode):
-        """ Set file conversion mode. 
-        
-            Args:
-                mode: string containing a possible file conversion mode. 
-                    (must be either 'encode' or 'decode')
+        """ @brief Set file conversion mode. 
+            @param mode Type string contains file conversion mode type 
+                (encode or decode)
         """
         self.mode = mode
 
     def dismiss_popup(self):
-        """ Dismiss a popup. """
+        """ @brief Dismiss a popup. """
         self._popup.dismiss()
 
     def show_load(self):
-        """ Open the file chooser menu. """
+        """ @brief Open the file chooser menu. """
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup = Popup(content=content)
         self._popup.open()
 
     def load(self, path, file):
-        """ Open a file from the file chooser menu, display its contents and
-            then close the menu. 
+        """ @brief Open a file from the file chooser menu, display its contents 
+            and then close the menu. 
+            @param path Type string contains path to file to open
+            @param file Type string contains name of file to open
         """
         file = os.path.join(path, file[0])
         self.file_name = file
@@ -116,9 +110,8 @@ class Cipher(BoxLayout):
         self.dismiss_popup()
         
     def convert(self):
-        """ Function to perform file conversion. Checks that all proper fields
-            are set before conversion.
-        """
+        """ @brief Convert a file. """
+        # handle error checking, make sure all fields are set
         if self.file_name != '' and self.mode != '' and self.cipher_map.name_is_set:
             self.cipher_map.code_file(self.file_name, self.mode)
             self.display_file(self.file_name)
@@ -126,7 +119,7 @@ class Cipher(BoxLayout):
             self.set_update("Error: complete all fields before attempting to convert file.")
 
 class CipherApp(App):
-
+    """ @brief Class to handle program wrapper. """
     def build(self):
         return Cipher()
     
