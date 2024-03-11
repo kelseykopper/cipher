@@ -1,21 +1,22 @@
 #:kivy 2.3.0
+#:import const constants
 
 # Global behavior for different widget types
 <Label>:
   font_name: '../fonts/NotoSans-Light.ttf'
   font_size: 19
   text_size: root.width, None
-  color: [0.1607843137254902, 0.1450980392156863, 0.13333333333333333, 1]
+  color: const.color_palette["black"]
   size: self.texture_size
   halign: 'center'
 
 <Popup>:
   size_hint: [0.9, 0.9]
   title: "Open file"
-  
+
 <Button>:
   background_normal: ''
-  background_color: [0.8392156862745098, 0.6509803921568628, 0.5725490196078431, 1]
+  background_color: const.color_palette["pink"]
 
 <LoadDialog>:
   BoxLayout:
@@ -25,6 +26,11 @@
 
     FileChooserListView:
       id: filechooser
+      canvas.before:
+        Color:
+          rgba: const.color_palette["pink"]
+        Rectangle:
+          size: self.size
 
     BoxLayout:
       size_hint_y: None
@@ -48,7 +54,7 @@
   BoxLayout:
     canvas.before:
       Color:
-        rgba: root.color_palette["beige"]
+        rgba: const.color_palette["beige"]
       Rectangle:
         pos: self.pos
         size: self.size
@@ -70,7 +76,7 @@
       TextInput:
         id: lib_id
         font_size: 20
-        background_color: [0.6392156862745098, 0.5647058823529412, 0.5058823529411764, 1]
+        background_color: const.color_palette["purple"]
         size_hint_y: .5
 
       Button:
@@ -114,10 +120,13 @@
         on_press: root.convert()
 
     # This is the right box containing file contents
-    Label:
-      id: file_id
-      halign: 'left'
-      padding: 10
-      text: ''
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
 
-    # TODO -> add scrollbar 
+      Label:
+        size_hint_y: None
+        id: file_id
+        halign: 'left'
+        padding: 10
+        text: ''

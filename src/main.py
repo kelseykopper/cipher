@@ -20,25 +20,14 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty
 
-# TODO - set window name to change when a file is selected
-# TODO - add scroll bar to file contents window 
-# TODO - proper google documentation style
-
+# TODO - fix file I/O size display
 class LoadDialog(FloatLayout):
-    """ @brief Class for handling file opening/closing. """
+    """ @brief Class for handling file I/O. """
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
 class Cipher(BoxLayout):
     """ @brief Class for handling the program contents and functionality. """
-    
-    color_palette = {
-        "beige" : [0.9372549019607843, 0.8509803921568627, 0.7058823529411765, 1],
-        "pink" : [0.8392156862745098, 0.6509803921568628, 0.5725490196078431, 1],
-        "purple" : [0.6392156862745098, 0.5647058823529412, 0.5058823529411764, 1],
-        "blue" : [0.30196078431372547, 0.3803921568627451, 0.3764705882352941, 1],
-        "black" : [0.1607843137254902, 0.1450980392156863, 0.13333333333333333, 1]
-    }
     
     # file to convert
     file_display = ObjectProperty()
@@ -46,7 +35,7 @@ class Cipher(BoxLayout):
     # name of cipher library
     lib_inpt = ObjectProperty() 
 
-    # notification box relating to file I/O
+    # notification box 
     update_msg = ObjectProperty()
 
     # attributes relating to cipher obj + file conversion
